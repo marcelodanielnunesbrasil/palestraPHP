@@ -5,9 +5,18 @@
 
 	$deleteID = (!empty($_GET['delete']) ? $_GET['delete'] : "");
 	if(!empty($deleteID)){
+		//echo '<script type="text/javascript">confirm("Usuário: '.$del['Nome'].' deletado!");</script>';
+
 		$del = mysql_query("DELETE FROM contatos WHERE id = {$deleteID}");
 		$msg = ($del == true ? 'deletou' : 'erro ao deletar');	
-		echo '<script type="text/javascript">alert("Usuário: '.$del['Nome'].' deletado!");</script>';
+	}
+
+	if(!empty($_POST)){
+		extract($_POST);
+		$insert = mysql_query("INSERT INTO contatos (Nome, Telefone) VALUES ('$nome' , '$telefone')");
+		if(!$insert){
+			die("Error ao adicionar!");
+		}
 	}
 ?>
 <!DOCTYPE html>
@@ -32,12 +41,14 @@
 		<div class="ui input">
 			<input required  type="text" name="nome" placeholder="Nome">
 		</div>
-	<br>
+	<br><br>
 		<div class="ui input">
 			<input  required type="text" name="telefone" placeholder="Telefone">
 		</div>
+		<br><br>
+			<input name="commit" type="submit" class="ui positive button" value="Acionar usuarios">
 	</form>
-	<a href="#" class="ui positive button">Acionar usuarios</a>
+
 </div>
 
 
@@ -63,7 +74,7 @@
       	<div class="ui buttons">
       		<a class="ui positive button" href="#">Editar</a>
       		<div class="or" data-text="ou"></div>
-      		<a class="ui negative button" href="?delete=<?= $res['id'];?>">Apagar</a>
+      		<a class="ui negative button apagar" href="?delete=<?= $res['id'];?>">Apagar</a>
       	</div>
       </td>
     </tr>
@@ -81,5 +92,19 @@
 
 <script   src="http://code.jquery.com/jquery-3.1.1.min.js"   integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="   crossorigin="anonymous"></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.4/semantic.min.js"></script>
+	<script type="text/javascript">
+	$(document).ready(function() {
+		$(".apagar").on('click', confirmaApagar);
+	})
+		function confirmaApagar(e) {
+			e.preventDefault();
+			var confirm = window.confirm("Deseja deletar este registro?");
+
+			if(confirm) {
+				var link = $(this).attr('href');
+				window.location.replace(link);
+			}
+		}
+	</script>
 </body>
 </html>
